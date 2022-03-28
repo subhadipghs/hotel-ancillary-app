@@ -12,13 +12,13 @@
 
 ---
 
-- [] Hotel CRUD(Single and Hotel Chain)
-- [] Services and Items CRUD
-- [] Add guest CRUD
-- [] List of the hotels
-- [] List of chains
-- [] List of all the services
-- [] Count of all the guests in the system
+- [ ] Hotel CRUD(Single and Hotel Chain)
+- [ ] Services and Items CRUD
+- [ ] Add guest CRUD
+- [ ] List of the hotels
+- [ ] List of chains
+- [ ] List of all the services
+- [ ] Count of all the guests in the system
 
 ### 3. Multi-tenancy Application
 
@@ -87,10 +87,10 @@ We're using microservices architecture here. There're 5 components in our archit
 4.  Hotel Services and Items service:
     - It handles CRUD operation for a service and items of each service
 5.  Database(MongoDB):
+
     - We're using MongoDB as database. and for handling multi-tenancy we're using schama based isolation for each tenant, where we'll create a seperated schema for each schema in the database.
       e.g Suppose there're two tenants Tenant1 and Tenant2.
       Each of them will have database entry in the _Tenants_ collection. If they perform CRUD operations for `Hotel` so we'll create seperate hotel collection for each tenant. For Tenant1 we'll create _Hotels.Id_Of_Tenant1_ collection and for Tenant2 we'll create
       _Hotels.Id_Of_Tenant2_ collection. If they perform CRUD operations for `Services and Items` then we'll create seperate collection for _Services.Id_of_Tenant1_ and _Services.Id_of_Tenant2_ and similarly we'll create seperate collection for Guests as well.
-      
-      
+
       ![Multi-tenant Application for Database](/resources/multi-tenant-architecture.png)

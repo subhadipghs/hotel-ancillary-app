@@ -1,6 +1,6 @@
 
 const { buildAccount } = require('./account')
-const Id = require('../id')
+const { Id } = require('../id')
 const argon = require('argon2')
 const validator = require('validator')
 

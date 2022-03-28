@@ -32,7 +32,7 @@ function buildAccount({ Id, makeHash, validator }) {
       getName: () => name,
       getEmail: () => email,
       getPhone: () => phone,
-      getPassword: () => hash || (hash = makeHash(password)),
+      getPassword: async () => hash || (hash = await makeHash(password)),
       isEmailVerified: () => emailVerfied,
       isPhoneVerified: () => phoneVerified,
       getCreateDate: () => createdAt,

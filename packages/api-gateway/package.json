@@ -8,6 +8,7 @@
     "test": "tap tests/**/*.js"
   },
   "dependencies": {
+    "argon2": "^0.28.5",
     "cuid": "^2.1.8",
     "dotenv": "^16.0.0",
     "express": "^4.17.3",

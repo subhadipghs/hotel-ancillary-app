@@ -91,4 +91,6 @@ We're using microservices architecture here. There're 5 components in our archit
       e.g Suppose there're two tenants Tenant1 and Tenant2.
       Each of them will have database entry in the _Tenants_ collection. If they perform CRUD operations for `Hotel` so we'll create seperate hotel collection for each tenant. For Tenant1 we'll create _Hotels.Id_Of_Tenant1_ collection and for Tenant2 we'll create
       _Hotels.Id_Of_Tenant2_ collection. If they perform CRUD operations for `Services and Items` then we'll create seperate collection for _Services.Id_of_Tenant1_ and _Services.Id_of_Tenant2_ and similarly we'll create seperate collection for Guests as well.
+      
+      
       ![Multi-tenant Application for Database](/resources/multi-tenant-architecture.png)

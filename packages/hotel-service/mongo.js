@@ -16,6 +16,10 @@ client.on("connectionReady", () => {
   connected = true
 })
 
+function getCollectionName(dbName, tenantId) {
+  return `${dbName}:${tenantId}`
+}
+
 module.exports = Object.freeze({
   /** get the mongodb client instance */
   getClient: () => client,
@@ -37,4 +41,20 @@ module.exports = Object.freeze({
       return null
     }
   },
+
+  getCollectionName,
+  /**
+   * For each tenant we will craete seperate collection
+   * It generates a collection name from the tenantId
+   * @param {string} dbName - name of the database
+   * @param {string} tenantId - id of the tenant
+   */
+  makeCollection: async (dbName, tenantId) => {
+    if (!connected) {
+      await client.connect()
+      logger.info("connected with the database " + dbName)
+    }
+    const collName = getCollectionName(dbName, tenantId)
+    return client.db(dbName).collection(collName)
+  }
 })

@@ -1,4 +1,5 @@
 const api = require('express').Router()
+const { createHotelApi } = require('./createHotelApi')
 
 
 api.get('/health', (_, res) => {
@@ -7,6 +8,8 @@ api.get('/health', (_, res) => {
     service: 'hotel-service'
   })
 })
+
+api.post('/', createHotelApi)
 
 
 module.exports = Object.freeze({

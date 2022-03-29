@@ -1,23 +1,20 @@
-const createHttpError = require("http-errors")
 const config = require("../config")
 const { hotelUseCases } = require('../usecases')
 
 /**
  * 
- * Create a hotel
+ * Update a hotel
  * 
- * POST /
+ * PATCH /:hotelId
  */
-exports.createHotelApi = async (req, res, next) => {
+exports.updateApi = async (req, res, next) => {
   try {
-    const paylaod = req.body
+    const payload = req.body
     const tenantId = req.get(config.tenantIdHeader)
-    const result = await hotelUseCases.insert({
-      ...paylaod,
-      tenantId
-    })
+    const hotelId = req.params.hotelId
+    const result = await hotelUseCases.updateById(hotelId, tenantId, payload)
     return res.status(201).json({
-      code: 201,
+      code: 200,
       ok: true,
       result
     })

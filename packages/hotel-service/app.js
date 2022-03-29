@@ -1,26 +1,11 @@
 "use strict"
 const e = require("express")
-const proxy = require("express-http-proxy")
 const { api } = require("./api")
 const { logger } = require("./logger")
-const config = require('./config')
-const { authMiddleware } = require('./auth-middleware')
 const createError = require("http-errors")
 
 const app = e()
 
-
-app.use(
-  "/hotels",
-  authMiddleware,
-  proxy(config.hotelServiceUrl, {
-    // only gives url after /proxy
-    proxyReqOptDecorator: (proxyReqOpts, req) => {
-      proxyReqOpts.headers['X-Tenant-Id'] = req.id
-      return proxyReqOpts;
-    }
-  })
-)
 
 app.use(e.json())
 app.use(api)

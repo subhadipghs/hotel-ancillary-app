@@ -1,6 +1,6 @@
 const createHttpError = require("http-errors")
 const config = require("../config")
-const { hotelDao } = require('../dao')
+const { hotelUseCases } = require('../usecases')
 
 /**
  * 
@@ -12,7 +12,7 @@ exports.createHotelApi = async (req, res, next) => {
   try {
     const paylaod = req.body
     const tenantId = req.get(config.tenantIdHeader)
-    const result = await hotelDao.insert({
+    const result = await hotelUseCases.insert({
       ...paylaod,
       tenantId
     })

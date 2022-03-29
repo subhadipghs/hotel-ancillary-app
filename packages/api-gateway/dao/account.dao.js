@@ -9,7 +9,12 @@ function buildAccountDao({ daoImplementation } = {}) {
     *
     * @param {object} account - account details to persist
     */
-    insert: async (account) => daoImplementation.insert(account)
+    insert: async (account) => daoImplementation.insert(account),
+    /**
+    * Find an account by email
+    * @param {string} email - email id
+    */
+    findByEmailId: async (email) => daoImplementation.findByEmailId(email)
   })
 }
 

@@ -12,13 +12,32 @@ function makeAccountMongoDao({ makeDb }) {
     */
     insert: async (account) => {
       const db = await makeDb(config.database)
+      const { id, ...rest } = account
       const details = await db.collection(collection).insertOne({
-        ...account,
-        _id: account.id
+        _id: id,
+        ...rest,
       })
       return {
         id: details.insertedId,
       }
+    },
+
+    /**
+    * Find an account by email id
+    */
+    findByEmailId: async (email) => {
+      const db = await makeDb(config.database)
+      const account = await db.collection(collection).findOne({
+        email
+      })
+      if (account) {
+        const { id, ...rest } = account
+        return {
+          _id: id,
+          ...rest
+        }
+      }
+      return null
     }
   })
 }

@@ -9,6 +9,10 @@ function buildAddAccountUseCase({ accountDao, signToken }) {
       password,
       phone,
     })
+    const isAccountExists = await accountDao.findByEmailId(email)
+    if (isAccountExists) {
+      throw new Error('Account already exists with the provided email')
+    }
     await accountDao.insert({
       id: account.getId(),
       name: account.getName(),
@@ -30,7 +34,7 @@ function buildAddAccountUseCase({ accountDao, signToken }) {
       expiresIn: config.expiresIn
     }
   }
-}
+  }
 
 module.exports = {
   buildAddAccountUseCase

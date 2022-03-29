@@ -1,6 +1,7 @@
 const { makeAccount } = require('../accounts')
+const config = require('../config')
 
-function buildAddAccountUseCase({ accountDao }) {
+function buildAddAccountUseCase({ accountDao, signToken }) {
   return async function ({ name, email, password, phone } = {}) {
     const account = makeAccount({
       name,
@@ -8,7 +9,7 @@ function buildAddAccountUseCase({ accountDao }) {
       password,
       phone,
     })
-    const newAccount = await accountDao.insert({
+    await accountDao.insert({
       id: account.getId(),
       name: account.getName(),
       email: account.getEmail(),
@@ -19,10 +20,14 @@ function buildAddAccountUseCase({ accountDao }) {
       isEmailVerified: account.isEmailVerified(),
       isPhoneVerified: account.isPhoneVerified(),
     })
-    return {
-      id: newAccount.id,
+    const token = await signToken({
+      id: account.getId(),
       name: account.getName(),
-      email: account.getEmail(), 
+      email: account.getEmail()
+    })
+    return {
+      token,
+      expiresIn: config.expiresIn
     }
   }
 }

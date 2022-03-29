@@ -9,7 +9,7 @@ const config = require('./config')
 * @param {object} paylaod - payload to be signed
 * @returns  {string} token
 */
-const signToken = (payload, secret = config.secret) => {
+exports.signToken = (payload, secret = config.secret) => {
   return new Promise((res, rej) => {
     try {
       // the expire method is hardcoded as 1 hour
@@ -19,7 +19,7 @@ const signToken = (payload, secret = config.secret) => {
         }
         res(token)
       })
-    } catch(e) {
+    } catch (e) {
       rej(e)
     }
   })
@@ -32,7 +32,7 @@ const signToken = (payload, secret = config.secret) => {
 * @param {string} secret - secret key
 * @returns {object} decoded token
 */
-const verifyToken = (token, secret = config.secret) => {
+exports.verifyToken = (token, secret = config.secret) => {
   return new Promise((res, rej) => {
     try {
       jwt.verify(token, secret, (e, decoded) => {
@@ -41,14 +41,10 @@ const verifyToken = (token, secret = config.secret) => {
         }
         res(decoded)
       })
-    } catch(e) {
+    } catch (e) {
       rej(e)
     }
   })
 }
 
 
-module.exports = Object.freeze({
-  signToken,
-  verifyToken
-})

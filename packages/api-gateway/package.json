@@ -4,14 +4,25 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "test": "tap tests/**/*.js",
+    "dev": "nodemon --exec node index.js"
   },
   "dependencies": {
+    "argon2": "^0.28.5",
+    "cuid": "^2.1.8",
     "dotenv": "^16.0.0",
     "express": "^4.17.3",
+    "express-http-proxy": "^1.6.3",
+    "http-errors": "^2.0.0",
     "jsonwebtoken": "^8.5.1",
     "mongodb": "^4.4.1",
     "morgan": "^1.10.0",
-    "pino": "^7.9.2"
+    "pino": "^7.9.2",
+    "tap": "^16.0.1",
+    "validator": "^13.7.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
   }
 }

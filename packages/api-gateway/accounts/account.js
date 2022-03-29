@@ -5,10 +5,8 @@ function buildAccount({ Id, makeHash, validator }) {
     id = Id.makeId(),
     name,
     email,
-    phone,
     password,
     emailVerfied = false,
-    phoneVerified = false,
     createdAt = new Date(),
     modifiedAt = new Date()
   } = {}) {
@@ -21,20 +19,14 @@ function buildAccount({ Id, makeHash, validator }) {
       throw new Error('Account requires a valid email id')
     }
 
-    if (!phone || !validator.isMobilePhone(phone)) {
-      throw new Error('Account requires a valid phone number')
-    }
-
     let hash
 
     return Object.freeze({
       getId: () => id,
       getName: () => name,
       getEmail: () => email,
-      getPhone: () => phone,
       getPassword: async () => hash || (hash = await makeHash(password)),
       isEmailVerified: () => emailVerfied,
-      isPhoneVerified: () => phoneVerified,
       getCreateDate: () => createdAt,
       getModifiedDate: () => modifiedAt,
       markEmailVerified: () => {
@@ -43,13 +35,7 @@ function buildAccount({ Id, makeHash, validator }) {
       markEmailNotVerified: () => {
         emailVerfied = false
       },
-      markPhoneVerified: () => {
-        phoneVerified = true
-      },
-      markPhoneNotVerified: () => {
-        phoneVerified = false
-      }
-    })
+   })
   }
 }
 

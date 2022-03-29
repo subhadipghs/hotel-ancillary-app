@@ -17,16 +17,13 @@ tap.test('account entity', (t) => {
     const data = {
       name: 'test',
       email: 'john@doe.com',
-      phone: '9284811111',
       password: 'ssh!!!'
     }
     const account = makeAccount(data)
     assert.equal(account.getName(), data.name)
     assert.ok(account.getId())
     assert.equal(account.getEmail(), data.email)
-    assert.equal(account.getPhone(), data.phone)
     assert.equal(account.isEmailVerified(), false)
-    assert.equal(account.isPhoneVerified(), false)
     const passCode = await account.getPassword()
     assert.ok(passCode)
     assert.ok(account.getCreateDate())
@@ -34,20 +31,16 @@ tap.test('account entity', (t) => {
     assert.end()
   })
 
-  t.test('should mark account email and phone as verified', assert => {
+  t.test('should mark account email as verified', assert => {
     const data = {
       name: 'test',
       email: 'john@doe.com',
-      phone: '9284811111',
       password: 'ssh!!!'
     }
     const account = makeAccount(data)
     assert.notOk(account.isEmailVerified())
-    assert.notOk(account.isPhoneVerified())
     account.markEmailVerified()
-    account.markPhoneVerified()
     assert.equal(account.isEmailVerified(), true)
-    assert.equal(account.isPhoneVerified(), true)
     assert.end()
   })
 
@@ -60,7 +53,6 @@ tap.test('account entity', (t) => {
     const data = {
       name: 'test',
       email: 'john@doe.com',
-      phone: '9284811111',
       password: 'ssh!!!'
     }
     const account = makeAccount(data)

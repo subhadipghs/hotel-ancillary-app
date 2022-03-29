@@ -1,5 +1,6 @@
 
 const createHttpError = require('http-errors')
+const { ObjectId } = require('mongodb')
 const config = require('../config')
 const { md5 } = require('../md5')
 
@@ -45,6 +46,23 @@ function buildHotelUsecases({ makeCollection }) {
       })
       return {
         id: result.insertedId
+      }
+    },
+    /**
+     * Read a hotel by hotel id
+     * @param {string} hotelId - id of the hotel
+     * @param {string} tenantId - id of the tenant
+     */
+    findById: async (hotelId, tenantId) => {
+      const collection = await makeCollection(config.database, tenantId)
+      const hotel = await collection.findOne({ _id: new ObjectId(hotelId) })
+      if (!hotel) {
+        throw new createHttpError(404, 'Hotel not found with the provided id')
+      }
+      const { _id: id, tenantId: tenant, createdAt, modifiedAt, hash, ...rest } = hotel
+      return {
+        id,
+        ...rest,
       }
     }
   })

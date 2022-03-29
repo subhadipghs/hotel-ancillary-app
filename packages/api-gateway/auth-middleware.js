@@ -18,6 +18,9 @@ function buildAuthMiddleware({ verifyToken }) {
   return async (req, _, next) => {
     try {
       const header = req.get("Authorization")
+      if (!header) {
+        return next(createError(403, 'Authorization header is required'))
+      }
       const token = extractToken(header)
       if (!token) {
         return next(createError(401, "Token is missing from request header"))
@@ -33,7 +36,7 @@ function buildAuthMiddleware({ verifyToken }) {
       if (e instanceof TokenExpiredError) {
         next(createError(401, "Token is expired"))
       } else {
-        next(createError(401, "Malformed token"))
+        next(createError(401, e.message))
       }
     }
   }

@@ -19,6 +19,10 @@ function buildHotelUsecases({ makeCollection }) {
     if (!hotel) {
       throw new createError(404, "Hotel not found with the provided id");
     }
+    return reMapHotelDocument(hotel) 
+  };
+
+  const reMapHotelDocument = (hotelDoc) => {
     const {
       _id: id,
       tenantId: tenant,
@@ -26,12 +30,12 @@ function buildHotelUsecases({ makeCollection }) {
       modifiedAt,
       hash,
       ...rest
-    } = hotel;
+    } = hotelDoc;
     return {
       id,
       ...rest,
     };
-  };
+  }
 
   const insert = async ({
     name,
@@ -111,6 +115,15 @@ function buildHotelUsecases({ makeCollection }) {
     };
   };
 
+  const getHotels = async (tenantId) => {
+    const collection = await getCollection(tenantId)
+    const hotels = await collection.find({ tenantId }).toArray()
+    if (hotels.length <= 0) {
+      throw new createError(404, 'No hotels found')
+    }
+    return hotels.map(h => reMapHotelDocument(h))
+  }
+
   return Object.freeze({
     /**
      * Create a hotel
@@ -135,7 +148,12 @@ function buildHotelUsecases({ makeCollection }) {
      * @param {string} hotelId - id of the hotel
      * @param {string} tenantId - id of the tenant
      */
-    deleteById
+    deleteById,
+
+    /**
+    * Get the hotels chains
+    */
+    getHotels
   });
 }
 

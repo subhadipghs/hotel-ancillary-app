@@ -31,9 +31,9 @@ function makeAccountMongoDao({ makeDb }) {
         email
       })
       if (account) {
-        const { id, ...rest } = account
+        const { _id, ...rest } = account
         return {
-          _id: id,
+          id: _id,
           ...rest
         }
       }

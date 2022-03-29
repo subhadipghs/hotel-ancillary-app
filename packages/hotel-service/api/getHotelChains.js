@@ -1,19 +1,17 @@
+
 const config = require("../config")
-const { logger } = require("../logger")
 const { hotelUseCases } = require('../usecases')
 
 /**
  * 
- * Read a hotel
+ * Read a list of hotels
  * 
- * GET /:hotelId
+ * GET /
  */
-exports.readHotelByIdApi = async (req, res, next) => {
+exports.getHotelChains = async (req, res, next) => {
   try {
-    const hotelId = req.params.hotelId
-    logger.info(hotelId)
     const tenantId = req.get(config.tenantIdHeader)
-    const result = await hotelUseCases.findById(hotelId, tenantId)
+    const result = await hotelUseCases.getHotels(tenantId)
     return res.status(201).json({
       code: 201,
       ok: true,

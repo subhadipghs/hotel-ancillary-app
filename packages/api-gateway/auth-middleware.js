@@ -1,5 +1,6 @@
-
-const { verifyToken } = require('./jwt')
+const createError = require("http-errors")
+const { TokenExpiredError } = require("jsonwebtoken")
+const { verifyToken } = require("./jwt")
 
 function buildAuthMiddleware({ verifyToken }) {
   /**
@@ -15,23 +16,30 @@ function buildAuthMiddleware({ verifyToken }) {
   }
 
   return async (req, _, next) => {
-    const header = req.get('Authorization')
-    const token = extractToken(header)
-    if (!token) {
-      return next(new Error('token missing'))
-    }
-    const decoded = await verifyToken(token)
-    if (decoded) {
-      console.log('decoded ', decoded)
-      req.id = decoded.id
-      next()
-    } else {
-      next(new Error('something went wrong. payload not found'))
+    try {
+      const header = req.get("Authorization")
+      const token = extractToken(header)
+      if (!token) {
+        return next(createError(401, "Token is missing from request header"))
+      }
+      const decoded = await verifyToken(token)
+      if (decoded) {
+        req.id = decoded.id
+        next()
+      } else {
+        next(createError(401, "Malformed token received"))
+      }
+    } catch (e) {
+      if (e instanceof TokenExpiredError) {
+        next(createError(401, "Token is expired"))
+      } else {
+        next(createError(401, "Malformed token"))
+      }
     }
   }
 }
 
 module.exports = Object.freeze({
   buildAuthMiddleware,
-  authMiddleware: buildAuthMiddleware({ verifyToken })
+  authMiddleware: buildAuthMiddleware({ verifyToken }),
 })

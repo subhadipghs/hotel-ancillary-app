@@ -96,6 +96,20 @@ function buildHotelUsecases({ makeCollection }) {
       updated: 1,
     };
   };
+  
+  const deleteById = async (hotelId, tenantId) => {
+    const collection = await getCollection(tenantId);
+    const hotel = await collection.findOne({ _id: new ObjectId(hotelId) });
+    if (!hotel) {
+      throw new createError(404, "Hotel not found with the provided id");
+    }
+    const { deletedCount } = await collection.deleteOne({
+      _id: new ObjectId(hotelId)
+    })
+    return {
+      deleted: deletedCount
+    };
+  };
 
   return Object.freeze({
     /**
@@ -116,6 +130,12 @@ function buildHotelUsecases({ makeCollection }) {
      * @param {string} payload - fields to be updated
      */
     updateById,
+    /**
+     * Delete a hotel by id
+     * @param {string} hotelId - id of the hotel
+     * @param {string} tenantId - id of the tenant
+     */
+    deleteById
   });
 }
 

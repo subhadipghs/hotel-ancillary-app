@@ -10,6 +10,19 @@ const createError = require("http-errors")
 const app = e()
 
 
+// Here we are using proxy to redirect the request to the specific service
+app.use(
+  "/hotels/:hotelId/services",
+  authMiddleware,
+  proxy(config.hotelItemServicesUrl, {
+    // only gives url after /proxy
+    proxyReqOptDecorator: (proxyReqOpts, req) => {
+      proxyReqOpts.headers['X-Tenant-Id'] = req.id
+      return proxyReqOpts;
+    },
+  })
+)
+
 app.use(
   "/hotels",
   authMiddleware,

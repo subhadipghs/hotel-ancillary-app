@@ -18,8 +18,11 @@ app.use(
     // only gives url after /proxy
     proxyReqOptDecorator: (proxyReqOpts, req) => {
       proxyReqOpts.headers['X-Tenant-Id'] = req.id
-      return proxyReqOpts;
+      return proxyReqOpts
     },
+    proxyReqPathResolver: (req) => {
+      return `/hotels/${req.params.hotelId}/services` + req.url
+    }
   })
 )
 
@@ -30,7 +33,7 @@ app.use(
     // only gives url after /proxy
     proxyReqOptDecorator: (proxyReqOpts, req) => {
       proxyReqOpts.headers['X-Tenant-Id'] = req.id
-      return proxyReqOpts;
+      return proxyReqOpts
     }
   })
 )

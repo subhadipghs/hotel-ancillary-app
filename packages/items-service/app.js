@@ -10,7 +10,6 @@ const app = e()
 app.use(e.json())
 app.use(api)
 
-
 app.get('*', (_, __, next) => {
   next(createError(404, 'Path not found'))
 })

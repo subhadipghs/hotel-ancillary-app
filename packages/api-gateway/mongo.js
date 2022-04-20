@@ -1,18 +1,18 @@
-"use strict"
+'use strict'
 
-const { MongoClient } = require("mongodb")
-const config = require("./config")
-const { logger } = require("./logger")
+const { MongoClient } = require('mongodb')
+const config = require('./config')
+const { logger } = require('./logger')
 
 const client = new MongoClient(config.mongoUrl, {
   useNewUrlParser: true,
-  useUnifiedTopology: true
+  useUnifiedTopology: true,
 })
 
 let connected = false
 
-client.on("connectionReady", () => {
-  logger.info("MongoDB is ready")
+client.on('connectionReady', () => {
+  logger.info('MongoDB is ready')
   connected = true
 })
 
@@ -29,11 +29,12 @@ module.exports = Object.freeze({
     try {
       if (!connected) {
         await client.connect()
-        logger.info("connected with the database " + dbName)
+        logger.info('connected with the database ' + dbName)
       }
       return client.db(dbName)
     } catch (e) {
-      logger.error("unable to connect to db " + dbName)
+      logger.error(e)
+      logger.error('unable to connect to db ' + dbName)
       return null
     }
   },

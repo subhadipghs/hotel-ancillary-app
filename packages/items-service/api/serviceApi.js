@@ -74,3 +74,25 @@ exports.deleteById = async (req, res, next) => {
     next(e)
   }
 }
+
+exports.updateById = async (req, res, next) => {
+  try {
+    const payload = req.body
+    const tenantId = req.get(config.tenantIdHeader)
+    const hotelId = req.params.hotelId
+    const serviceId = req.params.serviceId
+    const result = await serviceUsecase.updateById({
+      id: serviceId,
+      payload,
+      tenantId,
+      hotelId,
+    })
+    const status = result.ok ? 200 : 404
+    return res.status(status).json({
+      code: status,
+      ...result,
+    })
+  } catch (e) {
+    next(e)
+  }
+}

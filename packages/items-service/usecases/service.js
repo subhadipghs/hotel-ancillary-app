@@ -1,6 +1,7 @@
 const createError = require('http-errors')
 const { ObjectId } = require('mongodb')
 const config = require('../config')
+const { logger } = require('../logger')
 const { md5 } = require('../md5')
 
 function buildServiceUsecase({ makeCollection, hotelService }) {
@@ -101,6 +102,32 @@ function buildServiceUsecase({ makeCollection, hotelService }) {
     }
   }
 
+  const updateById = async ({ id, hotelId, tenantId, payload }) => {
+    if (!hotelId) {
+      throw new createError(400, 'Hotel id is required')
+    }
+    if (!id || !ObjectId.isValid(id)) {
+      throw new createError(400, 'Invalid service id provided')
+    }
+    const hotel = await hotelService.findOneHotel(hotelId, tenantId)
+    if (!hotel) {
+      throw new createError(404, 'Hotel not found')
+    }
+    if (Object.keys(payload).length <= 0) {
+      throw new createError(400, 'Empty payload received')
+    }
+    const collection = await getCollection(tenantId)
+    const { modifiedCount } = await collection.updateOne(
+      { _id: ObjectId(id) },
+      { $set: payload }
+    )
+    logger.info({ modifiedCount })
+    return {
+      ok: modifiedCount === 1,
+      count: modifiedCount,
+    }
+  }
+
   return Object.freeze({
     /**
      * Create a hotel service
@@ -125,6 +152,11 @@ function buildServiceUsecase({ makeCollection, hotelService }) {
      * @param {string} opts.tenantId - id of the tenant
      */
     deleteById,
+    /**
+     * Update service by id
+     * @param {object} service - hotel service information to be updated
+     */
+    updateById,
   })
 }
 

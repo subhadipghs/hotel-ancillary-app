@@ -84,6 +84,23 @@ function buildServiceUsecase({ makeCollection, hotelService }) {
     return remapServiceDocument(service)
   }
 
+  const deleteById = async ({ id, hotelId, tenantId }) => {
+    if (!hotelId) {
+      throw new createError(400, 'Hotel id is required')
+    }
+    if (!ObjectId.isValid(id)) {
+      throw new createError(400, 'Service id is invalid')
+    }
+    const collection = await getCollection(tenantId)
+    const { deletedCount } = await collection.deleteOne({
+      _id: ObjectId(id),
+    })
+    return {
+      ok: deletedCount === 1,
+      count: deletedCount,
+    }
+  }
+
   return Object.freeze({
     /**
      * Create a hotel service
@@ -99,6 +116,15 @@ function buildServiceUsecase({ makeCollection, hotelService }) {
      * @param {string} opts.tenantId - id of the tenant
      */
     findById,
+
+    /**
+     * Delete service info by id
+     * @param {object} opts
+     * @param {string} opts.id - id of the service
+     * @param {string} opts.hotelId - id of the hotel
+     * @param {string} opts.tenantId - id of the tenant
+     */
+    deleteById,
   })
 }
 

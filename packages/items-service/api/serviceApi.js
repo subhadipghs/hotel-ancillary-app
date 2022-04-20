@@ -50,3 +50,27 @@ exports.findServiceById = async (req, res, next) => {
     next(e)
   }
 }
+
+/**
+ * DELETE /:serviceId
+ *
+ */
+exports.deleteById = async (req, res, next) => {
+  try {
+    const id = req.params.serviceId
+    const tenantId = req.get(config.tenantIdHeader)
+    const hotelId = req.params.hotelId
+    const result = await serviceUsecase.deleteById({
+      id,
+      tenantId,
+      hotelId,
+    })
+    const status = result.ok ? 200 : 404
+    return res.status(status).json({
+      code: status,
+      ...result,
+    })
+  } catch (e) {
+    next(e)
+  }
+}

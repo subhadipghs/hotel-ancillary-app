@@ -14,6 +14,13 @@ function buildServiceUsecase({ makeCollection, hotelService }) {
     return collection
   }
 
+  const makeHash = (name) => {
+    if (!name || name.length <= 0) {
+      return
+    }
+    return md5(name.replace(' ', '').toLowerCase())
+  }
+
   const remapServiceDocument = (serviceDoc) => {
     const {
       _id: id,
@@ -48,7 +55,7 @@ function buildServiceUsecase({ makeCollection, hotelService }) {
       throw new createError(404, 'Hotel not found')
     }
     // make a hash of the name to check if it already exists
-    const hash = md5(name.replace(' ', '').toLowerCase())
+    const hash = makeHash(name)
     const service = await collection.findOne({ hash })
     if (service) {
       throw new createError(400, 'Hotel service already exists')
@@ -102,6 +109,16 @@ function buildServiceUsecase({ makeCollection, hotelService }) {
     }
   }
 
+  const findByHash = async (hash) => {
+    try {
+      const service = await collection.findOne({ hash })
+      return service
+    } catch (e) {
+      logger.error(e)
+      return null
+    }
+  }
+
   const updateById = async ({ id, hotelId, tenantId, payload }) => {
     if (!hotelId) {
       throw new createError(400, 'Hotel id is required')
@@ -116,12 +133,12 @@ function buildServiceUsecase({ makeCollection, hotelService }) {
     if (Object.keys(payload).length <= 0) {
       throw new createError(400, 'Empty payload received')
     }
+
     const collection = await getCollection(tenantId)
     const { modifiedCount } = await collection.updateOne(
       { _id: ObjectId(id) },
       { $set: payload }
     )
-    logger.info({ modifiedCount })
     return {
       ok: modifiedCount === 1,
       count: modifiedCount,

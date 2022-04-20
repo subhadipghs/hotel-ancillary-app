@@ -1,4 +1,4 @@
-"use strict"
+'use strict'
 
 const http = require('http')
 const config = require('./config')
@@ -11,7 +11,7 @@ const server = http.createServer(app)
 const main = async () => {
   await makeDb(config.database)
   server.listen(+config.port, () => {
-    logger.info(`Gateway server is running on port ${config.port}`)
+    logger.info(`api-gateway server is running on port ${config.port}`)
   })
 }
 

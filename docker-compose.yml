@@ -1,0 +1,56 @@
+version: '3.1'
+
+services:
+
+  api-gw:
+    build:
+      context: ./packages/api-gateway
+    env_file: ./packages/api-gateway/.env
+    ports:
+      - '3001:3001'
+    container_name: api-gateway
+    depends_on:
+      - mongo
+      - hotel-service
+      - items-service
+    networks:
+      - backend
+
+  hotel-service:
+    build:
+      context: ./packages/hotel-service
+    env_file: ./packages/hotel-service/.env
+    ports:
+      - '3002:3002'
+    container_name: hotel-service 
+    depends_on:
+      - mongo
+    networks:
+      - backend
+
+  items-service:
+    build:
+      context: ./packages/items-service
+    env_file: ./packages/items-service/.env
+    ports:
+      - '3003:3003'
+    container_name: items-service
+    depends_on:
+      - mongo
+    networks:
+      - backend
+
+
+  mongo:
+    container_name: mongo 
+    image: mongo:latest
+    ports:
+      - '27017:27017'
+    networks:
+      - backend
+    volumes:
+      - ./db/mongo-volume:/data/db
+
+networks:
+  backend:
+    driver: bridge

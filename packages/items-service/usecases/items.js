@@ -87,6 +87,23 @@ function buildItemsUsecase({ makeCollection, hotelService, hotelSvcService }) {
     return remapItemDocument(item)
   }
 
+  const deleteItemById = async ({ itemId, serviceId, hotelId, tenantId }) => {
+    const collection = await getCollection(tenantId)
+    const { deletedCount } = await collection.deleteOne({
+      _id: ObjectId(itemId),
+      serviceId,
+      hotelId,
+      tenantId,
+    })
+    if (deletedCount <= 0) {
+      throw new createError(404, 'Item not found')
+    }
+    return {
+      count: deletedCount,
+      ok: deletedCount === 1,
+    }
+  }
+
   /**
    * Validate a schema against the payload
    *
@@ -143,6 +160,7 @@ function buildItemsUsecase({ makeCollection, hotelService, hotelSvcService }) {
   return Object.freeze({
     insert,
     findItemById,
+    deleteItemById,
   })
 }
 

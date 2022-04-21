@@ -104,6 +104,49 @@ function buildItemsUsecase({ makeCollection, hotelService, hotelSvcService }) {
     }
   }
 
+  const updateItemById = async ({
+    payload,
+    itemId,
+    serviceId,
+    hotelId,
+    tenantId,
+  }) => {
+    if (!hotelId || !ObjectId.isValid(hotelId)) {
+      throw new createError(400, 'Hotel id is required')
+    }
+
+    const service = await hotelSvcService.findById({
+      id: serviceId,
+      hotelId,
+      tenantId,
+    })
+
+    const schema = makeSchema(service.fields)
+    const [isValid, errors] = validateSchema(schema, payload)
+
+    if (!isValid) {
+      logger.error(errors)
+      throw new createError(400, 'Invalid items details provided')
+    }
+
+    const collection = await getCollection(tenantId)
+    logger.info({
+      msg: 'itemId',
+      itemId,
+      payload,
+    })
+    const { modifiedCount } = await collection.updateOne(
+      { _id: ObjectId(itemId) },
+      { $set: { ...payload, modifiedAt: new Date() } }
+    )
+    if (modifiedCount <= 0) {
+      throw new createError(404, 'Item not found')
+    }
+    return {
+      count: modifiedCount,
+      ok: modifiedCount > 0,
+    }
+  }
   /**
    * Validate a schema against the payload
    *
@@ -161,6 +204,7 @@ function buildItemsUsecase({ makeCollection, hotelService, hotelSvcService }) {
     insert,
     findItemById,
     deleteItemById,
+    updateItemById,
   })
 }
 

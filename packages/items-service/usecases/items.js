@@ -1,5 +1,6 @@
 const { default: Ajv } = require('ajv')
 const createError = require('http-errors')
+const { ObjectId } = require('mongodb')
 const { logger } = require('../logger')
 
 function buildItemsUsecase({ makeCollection, hotelService, hotelSvcService }) {
@@ -57,6 +58,35 @@ function buildItemsUsecase({ makeCollection, hotelService, hotelSvcService }) {
     }
   }
 
+  const remapItemDocument = (itemDoc) => {
+    const {
+      _id: id,
+      hotelId,
+      tenantId,
+      createdAt,
+      modifiedAt,
+      ...rest
+    } = itemDoc
+    return {
+      id,
+      ...rest,
+    }
+  }
+
+  const findItemById = async ({ itemId, serviceId, hotelId, tenantId }) => {
+    const collection = await getCollection(tenantId)
+    const item = await collection.findOne({
+      _id: ObjectId(itemId),
+      serviceId,
+      hotelId,
+      tenantId,
+    })
+    if (!item) {
+      throw new createError(404, 'Item not found')
+    }
+    return remapItemDocument(item)
+  }
+
   /**
    * Validate a schema against the payload
    *
@@ -112,6 +142,7 @@ function buildItemsUsecase({ makeCollection, hotelService, hotelSvcService }) {
 
   return Object.freeze({
     insert,
+    findItemById,
   })
 }
 

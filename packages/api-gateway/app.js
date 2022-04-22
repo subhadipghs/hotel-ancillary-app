@@ -1,18 +1,32 @@
-"use strict"
-const e = require("express")
-const proxy = require("express-http-proxy")
-const { api } = require("./api")
-const { logger } = require("./logger")
+'use strict'
+const e = require('express')
+const proxy = require('express-http-proxy')
+const { api } = require('./api')
+const { logger } = require('./logger')
 const config = require('./config')
 const { authMiddleware } = require('./auth-middleware')
-const createError = require("http-errors")
+const createError = require('http-errors')
 
 const app = e()
 
+app.use(
+  '/hotels/:hotelId/guests',
+  authMiddleware,
+  proxy(config.hotelGuestsServiceUrl, {
+    // only gives url after /proxy
+    proxyReqOptDecorator: (proxyReqOpts, req) => {
+      proxyReqOpts.headers['X-Tenant-Id'] = req.id
+      return proxyReqOpts
+    },
+    proxyReqPathResolver: (req) => {
+      return `/hotels/${req.params.hotelId}/guests` + req.url
+    },
+  })
+)
 
 // Here we are using proxy to redirect the request to the specific service
 app.use(
-  "/hotels/:hotelId/services",
+  '/hotels/:hotelId/services',
   authMiddleware,
   proxy(config.hotelItemServicesUrl, {
     // only gives url after /proxy
@@ -22,25 +36,24 @@ app.use(
     },
     proxyReqPathResolver: (req) => {
       return `/hotels/${req.params.hotelId}/services` + req.url
-    }
+    },
   })
 )
 
 app.use(
-  "/hotels",
+  '/hotels',
   authMiddleware,
   proxy(config.hotelServiceUrl, {
     // only gives url after /proxy
     proxyReqOptDecorator: (proxyReqOpts, req) => {
       proxyReqOpts.headers['X-Tenant-Id'] = req.id
       return proxyReqOpts
-    }
+    },
   })
 )
 
 app.use(e.json())
 app.use(api)
-
 
 app.get('*', (_, __, next) => {
   next(createError(404, 'Path not found'))

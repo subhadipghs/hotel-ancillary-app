@@ -5,7 +5,20 @@ const {
   deleteById,
   updateById,
 } = require('./serviceApi')
+const {
+  createItem,
+  findItemById,
+  deleteItemById,
+  updateItemById,
+} = require('./itemsApi')
 
+// items api
+api.post('/hotels/:hotelId/services/:serviceId/items', createItem)
+api.get('/hotels/:hotelId/services/:serviceId/items/:itemId', findItemById)
+api.put('/hotels/:hotelId/services/:serviceId/items/:itemId', updateItemById)
+api.delete('/hotels/:hotelId/services/:serviceId/items/:itemId', deleteItemById)
+
+// service api
 api.post('/hotels/:hotelId/services', createServiceApi)
 api.get('/hotels/:hotelId/services/:serviceId', findServiceById)
 api.delete('/hotels/:hotelId/services/:serviceId', deleteById)

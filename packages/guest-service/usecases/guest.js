@@ -1,6 +1,7 @@
 const createError = require('http-errors')
 const { ObjectId } = require('mongodb')
 const config = require('../config')
+const { logger } = require('../logger')
 
 exports.buildGuestUsecase = function buildGuestUsecase({
   makeCollection,
@@ -94,9 +95,40 @@ exports.buildGuestUsecase = function buildGuestUsecase({
     }
   }
 
+  const updateGuestById = async ({ payload, hotelId, guestId, tenantId }) => {
+    if (!hotelId) {
+      throw new createError(400, 'Hotel id is required')
+    }
+    const hotel = await hotelService.findOneHotel(hotelId, tenantId)
+    if (!hotel) {
+      throw new createError(404, 'Hotel not found')
+    }
+    const collection = await getCollection(tenantId)
+    logger.info({
+      payload,
+    })
+    const result = await collection.updateOne(
+      { _id: ObjectId(guestId) },
+      {
+        $set: {
+          ...payload,
+          modifiedAt: new Date(),
+        },
+      }
+    )
+    if (result.modifiedCount < 1) {
+      throw new createError(404, 'Guest not found')
+    }
+    return {
+      count: result.modifiedCount,
+      ok: result.modifiedCount == 1,
+    }
+  }
+
   return Object.freeze({
     addGuest,
     findGuestById,
     deleteGuestById,
+    updateGuestById,
   })
 }

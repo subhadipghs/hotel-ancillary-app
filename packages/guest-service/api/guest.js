@@ -57,3 +57,23 @@ exports.deleteGuestById = async (req, res, next) => {
     next(e)
   }
 }
+
+exports.updateGuestById = async (req, res, next) => {
+  try {
+    const payload = req.body
+    const tenantId = req.get(config.tenantIdHeader)
+    const { hotelId, guestId } = req.params
+    const result = await guestUsecase.updateGuestById({
+      payload,
+      guestId,
+      tenantId,
+      hotelId,
+    })
+    return res.status(200).json({
+      code: 200,
+      ...result,
+    })
+  } catch (e) {
+    next(e)
+  }
+}

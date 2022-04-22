@@ -40,6 +40,17 @@ services:
     networks:
       - backend
 
+  guests-service:
+    build:
+      context: ./packages/guest-service
+    env_file: ./packages/guest-service/.env
+    ports:
+      - '3004:3004'
+    container_name: guest-service 
+    depends_on:
+      - mongo
+    networks:
+      - backend
 
   mongo:
     container_name: mongo 

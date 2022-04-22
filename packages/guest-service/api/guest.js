@@ -20,3 +20,22 @@ exports.addGuestApi = async (req, res, next) => {
     next(e)
   }
 }
+
+exports.findGuestById = async (req, res, next) => {
+  try {
+    const tenantId = req.get(config.tenantIdHeader)
+    const { hotelId, guestId } = req.params
+    const result = await guestUsecase.findGuestById({
+      guestId,
+      tenantId,
+      hotelId,
+    })
+    return res.status(200).json({
+      code: 200,
+      ok: true,
+      result,
+    })
+  } catch (e) {
+    next(e)
+  }
+}

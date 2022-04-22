@@ -1,3 +1,5 @@
+const createError = require('http-errors')
+const { ObjectId } = require('mongodb')
 const config = require('../config')
 
 exports.buildGuestUsecase = function buildGuestUsecase({
@@ -48,7 +50,36 @@ exports.buildGuestUsecase = function buildGuestUsecase({
     }
   }
 
+  const remapGuestDoc = (guestDoc) => {
+    const {
+      _id: id,
+      hotelId,
+      tenantId,
+      createdAt,
+      modifiedAt,
+      ...rest
+    } = guestDoc
+    return {
+      id,
+      ...rest,
+    }
+  }
+
+  const findGuestById = async ({ guestId, hotelId, tenantId }) => {
+    const collection = await getCollection(tenantId)
+    const result = await collection.findOne({
+      _id: ObjectId(guestId),
+      hotelId,
+      tenantId,
+    })
+    if (!result) {
+      throw new createError(404, 'Guest not found')
+    }
+    return remapGuestDoc(result)
+  }
+
   return Object.freeze({
     addGuest,
+    findGuestById,
   })
 }

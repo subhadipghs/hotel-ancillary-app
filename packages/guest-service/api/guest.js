@@ -39,3 +39,21 @@ exports.findGuestById = async (req, res, next) => {
     next(e)
   }
 }
+
+exports.deleteGuestById = async (req, res, next) => {
+  try {
+    const tenantId = req.get(config.tenantIdHeader)
+    const { hotelId, guestId } = req.params
+    const result = await guestUsecase.deleteGuestById({
+      guestId,
+      tenantId,
+      hotelId,
+    })
+    return res.status(200).json({
+      code: 200,
+      ...result,
+    })
+  } catch (e) {
+    next(e)
+  }
+}

@@ -78,8 +78,25 @@ exports.buildGuestUsecase = function buildGuestUsecase({
     return remapGuestDoc(result)
   }
 
+  const deleteGuestById = async ({ guestId, hotelId, tenantId }) => {
+    const collection = await getCollection(tenantId)
+    const { deletedCount } = await collection.deleteOne({
+      _id: ObjectId(guestId),
+      hotelId,
+      tenantId,
+    })
+    if (deletedCount < 1) {
+      throw new createError(404, 'Guest not found')
+    }
+    return {
+      ok: deletedCount == 1,
+      count: deletedCount,
+    }
+  }
+
   return Object.freeze({
     addGuest,
     findGuestById,
+    deleteGuestById,
   })
 }
